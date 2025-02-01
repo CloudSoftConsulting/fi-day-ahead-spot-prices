@@ -19,7 +19,9 @@ jobs:
       - name: Run Python script to generate file
         env:
           ENTSO_API_KEY: ${{ secrets.ENTSO_API_KEY }}
-        run: python panda_client.py
+        run: |
+          python -m pip install entsoe-py
+          python panda_client.py
 
       - name: Configure Git
         run: |
