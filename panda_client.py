@@ -34,7 +34,7 @@ def main():
     # Exit if the file already exists
     if file_path.exists():
         print(f"File '{file_path}' exists. Exiting the script.")
-        sys.exit(1)
+        sys.exit(0)
 
     # Initialize the EntsoePandasClient with your API key
     api_key = os.getenv('ENTSO_API_KEY')
