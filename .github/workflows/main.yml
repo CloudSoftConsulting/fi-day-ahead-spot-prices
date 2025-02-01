@@ -1,0 +1,40 @@
+name: Update FI prices
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  update_file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # Provides authentication.
+          persist-credentials: false
+
+      - name: Run Python script to generate file
+        env:
+          ENTSO_API_KEY: ${{ secrets.ENTSO_API_KEY }}
+        run: python panda_client.py
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "info@cloudsoft.fi"
+          git config --global user.name "CloudSoft"
+
+      - name: Commit and push changes
+        run: |
+          # Stage all changes in the data directory.
+          git add data/
+
+          # Only commit if there are changes staged.
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update FI spot prices"
+            git push origin HEAD:main
+          fi
