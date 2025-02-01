@@ -5,7 +5,7 @@ The filename is based on tomorrow's date (YYYYMMDD). If the file already exists,
 Only data with tomorrow's date is saved.
 The result file is stored in the 'data' directory, which is created if necessary.
 """
-
+import os
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
