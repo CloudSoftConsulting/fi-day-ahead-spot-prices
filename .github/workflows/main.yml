@@ -4,7 +4,9 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
-
+  schedule:
+    - cron: '30-59/10 15 * * *'
+    - cron: '0-30/10 16 * * *'
 jobs:
   update_file:
     runs-on: ubuntu-latest
