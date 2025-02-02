@@ -17,8 +17,21 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}  # Provides authentication.
           persist-credentials: true
-
+      
+      - name: Check if tomorrow's file exists
+        id: check_file
+        run: |
+          tomorrow=$(date -d "tomorrow" +'%Y%m%d')
+          file="data/fi_${tomorrow}.csv"
+          if [ -f "$file" ]; then
+            echo "file_exists=true" >> $GITHUB_OUTPUT
+            echo "Tomorrow's file already exists, skipping the heavy work."
+          else
+            echo "file_exists=false" >> $GITHUB_OUTPUT
+          fi
+      
       - name: Run Python script to generate file
+        if: steps.check_file.outputs.file_exists == 'false'
         env:
           ENTSO_API_KEY: ${{ secrets.ENTSO_API_KEY }}
         run: |
