@@ -13,7 +13,6 @@ from pathlib import Path
 import pandas as pd
 from entsoe import EntsoePandasClient
 
-
 def main():
     # Set 'now' to today's date at midnight
     now = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -47,9 +46,13 @@ def main():
     # Query the day-ahead prices for the specified time range
     ts = client.query_day_ahead_prices('FI', start=start, end=end)
 
-    # Filter the data to only include rows with tomorrow's date (YYYY-MM-DD)
-    target_date_str = tomorrow.strftime("%Y-%m-%d")
-    ts = ts[ts.index.strftime("%Y-%m-%d") == target_date_str]
+    # If the API returns an incomplete dataset (fewer than 25 records), do not save the file.
+    if len(ts) < 25:
+        print("Incomplete data set received (fewer than 25 records). Not saving file.")
+        sys.exit(0)
+
+    # Drop the first record, which belongs to the previous dataset.
+    ts = ts.iloc[1:]
 
     # Give the Series a name for a nicer header and reset the index to create a DataFrame
     ts.name = "price"
