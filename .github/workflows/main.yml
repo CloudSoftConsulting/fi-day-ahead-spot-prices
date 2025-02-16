@@ -7,6 +7,7 @@ on:
   schedule:
     - cron: '30-59/10 11 * * *'
     - cron: '0-30/10 12 * * *'
+
 jobs:
   update_file:
     runs-on: ubuntu-latest
@@ -17,12 +18,15 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}  # Provides authentication.
           persist-credentials: true
-      
+
       - name: Check if tomorrow's file exists
         id: check_file
         run: |
-          tomorrow=$(date -d "tomorrow" +'%Y%m%d')
-          file="data/fi_${tomorrow}.csv"
+          year=$(date -d "tomorrow" +'%Y')
+          month=$(date -d "tomorrow" +'%m')
+          day=$(date -d "tomorrow" +'%d')
+          file="data/${year}/${month}/${day}.csv"
+          echo "Checking for file: $file"
           if [ -f "$file" ]; then
             echo "file_exists=true" >> $GITHUB_OUTPUT
             echo "Tomorrow's file already exists, skipping the heavy work."
